@@ -1,0 +1,66 @@
+/* font-family: 'East Sea Dokdo', cursive; */
+/* font-family: 'Gowun Batang', serif; */
+/* font-family: 'Gowun Dodum', sans-serif; */
+/* font-family: 'Song Myung', serif; */
+
+#wipe {
+  font-size: 1.6rem;
+}
+
+article {
+  display: flex;
+  flex-direction: column;
+}
+
+body {
+  background-color: black;
+  background-size: cover;
+  background-attachment: fixed;
+  color: azure;
+  /* color: #d16b22; */
+  font-family: "Song Myung", serif;
+  font-size: 1.5rem;
+
+  /* font-family: "East Sea Dokdo", cursive; */
+}
+
+#title-img {
+  width: 70vw;
+  height: 70vw;
+  margin: 0 auto;
+}
+
+.question {
+  display: none;
+}
+
+.loading {
+  display: none;
+}
+
+.result {
+  display: none;
+}
+
+#img {
+  width: 70vw;
+  height: 70vw;
+  margin: 0 auto;
+}
+
+.btn {
+  background-color: #45392b;
+  color: azure;
+}
+
+.progress-bar {
+  background-color: #947f6b;
+}
+
+#number {
+  color: #666666;
+}
+
+#bubble {
+  font-size: 1.8rem;
+}

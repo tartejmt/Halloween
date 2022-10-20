@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Halloween</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=East+Sea+Dokdo&family=Gowun+Batang&family=Gowun+Dodum&family=Song+Myung&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="text/javascript">
+      // <![CDATA[
+      // all colours must be in format '#NNNNNN', not 'red' or 'rgb(7,8,9)'
+      var fgcolour = "#d16b22"; // foreground colour
+      var hlcolour = "#ffb37d"; // highlight colour
+      var bgcolour = "#000000"; // background colour
+      var glcolour = "#e8a06d"; // colour of glow around letters
+      var speed = 66; // speed colours change, 1 second = 1000
+      var delay = 50; // how long to wait between wipes
+      var alink = "http://www.mf2fm.com/rv"; // page to link text to (set to ="" for no link)
+
+      /****************************
+       *Multi-Wipe Neon Text Effect*
+       *(c)2003-13 mf2fm web-design*
+       *  http://www.mf2fm.com/rv  *
+       * DON'T EDIT BELOW THIS BOX *
+       ****************************/
+      var w_txt, w_txl;
+      var w_flp = bgcolour;
+      var w_sty = Math.floor(Math.random() * 8);
+      var w_cnt = -1;
+      var wipes = new Array();
+      var wrand = new Array();
+
+      function addLoadEvent(funky) {
+        var oldonload = window.onload;
+        if (typeof oldonload != "function") window.onload = funky;
+        else
+          window.onload = function () {
+            if (oldonload) oldonload();
+            funky();
+          };
+      }
+
+      addLoadEvent(fzzz);
+
+      function fzzz() {
+        if (document.getElementById) {
+          var i, wiper, wipei;
+          wiper = document.getElementById("wipe");
+          w_txt = wiper.firstChild.nodeValue;
+          w_txl = w_txt.length;
+          while (wiper.childNodes.length)
+            wiper.removeChild(wiper.childNodes[0]);
+          for (i = 0; i < w_txl; i++) {
+            wipei = document.createElement("span");
+            wipei.appendChild(document.createTextNode(w_txt.charAt(i)));
+            wipes[i] = wipei.style;
+            wipes[i].textShadow = glcolour + " 0px 0px 5px";
+            wipes[i].color = fgcolour;
+            wiper.appendChild(wipei);
+          }
+          if (alink) {
+            wiper.style.cursor = "pointer";
+            wiper.onclick = function () {
+              top.location.href = alink;
+            };
+          }
+          for (i = 0; i < w_txl; i++) wrand[i] = i;
+          wiper = setInterval("randwipe()", speed);
+        }
+      }
+
+      function c(i, shade) {
+        if (shade == bgcolour) wipes[i].textShadow = "none";
+        else wipes[i].textShadow = glcolour + " 0px 0px 5px";
+        wipes[i].color = shade;
+      }
+
+      function randwipe() {
+        var w_old;
+        if (w_cnt++ < w_txl + 2 + delay * (w_flp == fgcolour))
+          eval("wipe" + w_sty + "();");
+        else {
+          w_cnt = -1;
+          w_flp = w_flp == fgcolour ? bgcolour : fgcolour;
+          w_old = w_sty;
+          while (w_old == w_sty) w_sty = Math.floor(Math.random() * 9);
+        }
+      }
+
+      function dechex(dec) {
+        return (dec < 16 ? "0" : "") + dec.toString(16);
+      }
+
+      function wipe0() {
+        // full curtains
+        var half = Math.floor(w_txl / 2);
+        if (w_cnt < w_txl) {
+          c(w_cnt, w_cnt < half ? hlcolour : w_flp);
+          c(w_txl - w_cnt - 1, w_cnt < half ? hlcolour : w_flp);
+        }
+      }
+
+      function wipe1() {
+        // random
+        var i, rand, temp;
+        if (w_cnt == 0) {
+          for (i = 0; i < w_txl; i++) {
+            rand = Math.floor(Math.random() * w_txl);
+            temp = wrand[i];
+            wrand[i] = wrand[rand];
+            wrand[rand] = temp;
+          }
+        }
+        if (w_cnt < w_txl) c(wrand[w_cnt], hlcolour);
+        if (w_cnt > 0 && w_cnt < w_txl + 1) c(wrand[w_cnt - 1], w_flp);
+      }
+
+      function wipe2() {
+        // forwards
+        if (w_cnt < w_txl) c(w_cnt, hlcolour);
+        if (w_cnt > 0 && w_cnt < w_txl + 1) c(w_cnt - 1, w_flp);
+      }
+
+      function wipe3() {
+        // backwards
+        if (w_cnt < w_txl) c(w_txl - (w_cnt + 1), hlcolour);
+        if (w_cnt > 0 && w_cnt < w_txl + 1) c(w_txl - w_cnt, w_flp);
+      }
+
+      function wipe4() {
+        // searchlight
+        if (w_cnt < w_txl) c(w_cnt, hlcolour);
+        if (w_cnt > 0 && w_cnt < w_txl + 1) c(w_cnt - 1, w_flp);
+        if (w_cnt > 1 && w_cnt < w_txl + 2) c(w_cnt - 2, hlcolour);
+        if (w_cnt > 2 && w_cnt < w_txl + 3)
+          c(w_cnt - 3, w_flp == fgcolour ? bgcolour : fgcolour);
+        if (w_cnt == w_txl + 2) w_flp = w_flp == fgcolour ? bgcolour : fgcolour;
+      }
+
+      function wipe5() {
+        // fade
+        var i;
+        if (w_cnt < w_txl + 3) {
+          var start = w_flp == fgcolour ? bgcolour : fgcolour;
+          var temp = "#";
+          for (i = 1; i < 6; i += 2) {
+            var hex1 = parseInt(start.substring(i, i + 2), 16);
+            var hex2 = parseInt(w_flp.substring(i, i + 2), 16);
+            temp += dechex(
+              Math.floor(hex1 + (hex2 - hex1) * (w_cnt / (w_txl + 2)))
+            );
+          }
+          for (i = 0; i < w_txl; i++) c(i, temp);
+        }
+      }
+
+      function wipe6() {
+        // flash
+        var i;
+        if (w_cnt < 6 * Math.floor(w_txl / 6) + 3) {
+          if (w_cnt % 6 == 0 || w_cnt % 6 == 3)
+            for (i = 0; i < w_txl; i++) c(i, hlcolour);
+          else if (w_cnt % 6 == 1) for (i = 0; i < w_txl; i++) c(i, w_flp);
+          else if (w_cnt % 6 == 4)
+            for (i = 0; i < w_txl; i++)
+              c(i, w_flp == fgcolour ? bgcolour : fgcolour);
+        }
+      }
+
+      function wipe7() {
+        // checkerboard
+        var qtr = Math.floor(w_txl / 4);
+        if (w_cnt < qtr) {
+          c(w_cnt, hlcolour);
+          c(w_cnt + 2 * qtr, hlcolour);
+        } else if (w_cnt < 2 * qtr) {
+          c(w_cnt - qtr, w_flp);
+          c(w_cnt + qtr, w_flp);
+        } else if (w_cnt < 3 * qtr) {
+          c(w_cnt - qtr, hlcolour);
+          c(w_cnt + qtr, hlcolour);
+        } else if (w_cnt < w_txl) {
+          c(w_cnt - 2 * qtr, w_flp);
+          c(w_cnt, w_flp);
+        }
+      }
+
+      function wipe8() {
+        // half curtains
+        var half = Math.floor(w_txl / 2);
+        if (w_cnt < half) {
+          c(w_cnt, hlcolour);
+          c(w_txl - w_cnt - 1, hlcolour);
+        } else if (w_cnt < w_txl) {
+          c(w_cnt - half, w_flp);
+          c(w_txl + half - w_cnt - 1, w_flp);
+        }
+      }
+      // ]]>
+    </script>
+    <script type="text/javascript">
+      // <![CDATA[
+      var bgcolour = "#ffb37d"; // background colour
+      var fgcolour = "#d16b22"; // foreground colour
+      var speed = 80; // speed of bubbling, lower is faster
+      var shades = 12; // number of shades of bubble
+
+      /****************************
+       *    Bubbling Text Effect   *
+       *(c)2003-13 mf2fm web-design*
+       *  http://www.mf2fm.com/rv  *
+       * DON'T EDIT BELOW THIS BOX *
+       ****************************/
+      var bubbcol = new Array();
+      var bubbshd;
+      var bubbler, bubbtxt;
+      var bubbchr = new Array();
+
+      function addLoadEvent(funky) {
+        var oldonload = window.onload;
+        if (typeof oldonload != "function") window.onload = funky;
+        else
+          window.onload = function () {
+            if (oldonload) oldonload();
+            funky();
+          };
+      }
+
+      addLoadEvent(bubbagump);
+
+      function bubbagump() {
+        if (document.getElementById) {
+          var i, fg, bg, col;
+          for (bubbler = 0; bubbler <= shades; bubbler++) {
+            col = "#";
+            for (i = 1; i < 6; i += 2) {
+              bg = parseInt(bgcolour.substring(i, i + 2), 16);
+              fg = parseInt(fgcolour.substring(i, i + 2), 16);
+              col += dechex(bg + (fg - bg) * (bubbler / shades));
+            }
+            bubbcol[bubbler + 1] = col;
+            if (bubbler == Math.floor(shades / 2)) bubbshd = col;
+          }
+          bubbler = document.getElementById("bubble");
+          bubbtxt = bubbler.firstChild.nodeValue;
+          while (bubbler.childNodes.length)
+            bubbler.removeChild(bubbler.childNodes[0]);
+          for (i = 0; i < bubbtxt.length; i++) {
+            fg = document.createElement("span");
+            fg.setAttribute("id", "bubb" + i);
+            fg.style.textShadow = bubbshd + " 0px 0px 2px";
+            fg.appendChild(document.createTextNode(bubbtxt.charAt(i)));
+            bubbler.appendChild(fg);
+          }
+          bubbler = setInterval("bubbling()", speed);
+        }
+      }
+
+      function dechex(dec) {
+        dec = Math.floor(dec);
+        return (dec < 16 ? "0" : "") + dec.toString(16);
+      }
+
+      function bubbling() {
+        var i, bubby;
+        for (i = 0; i < bubbtxt.length; i++) {
+          bubby = document.getElementById("bubb" + i);
+          if (bubbchr[i]) {
+            bubby.style.color = bubbcol[bubbchr[i]];
+            bubbchr[i] = (bubbchr[i] + 1) % bubbcol.length;
+          } else if (Math.random() < 7.5 / (shades * bubbtxt.length))
+            bubbchr[i] = 1;
+        }
+      }
+      // ]]>
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body class="container">
+    <article class="start">
+      <span id="wipe" class="mt-5 text-center"
+        >나와 어울리는 할로윈 캐릭터는?
+      </span>
+      <img
+        class="mt-5"
+        id="title-img"
+        src="emilia-willberg-adEviDyBoEI-unsplash.jpg"
+      />
+      <button type="button" class="btn mt-5" onclick="start();">
+        > 테스트 시작하기
+      </button>
+    </article>
+    <article class="question">
+      <div class="progress mt-5">
+        <div
+          class="progress-bar"
+          role="progressbar"
+          style="width: calc(100 / 12 * 1%)"
+        ></div>
+      </div>
+      <p id="number" class="text-center mt-5">번호</p>
+      <p id="title" class="text-center">문제</p>
+      <input id="type" type="hidden" value="EI" />
+      <button id="A" type="button" class="btn mt-5">Primary</button>
+      <button id="B" type="button" class="btn mt-5">Primary</button>
+    </article>
+    <article class="loading mt-5">
+      <img
+        class="mt-5"
+        id="title-img"
+        src="emilia-willberg-adEviDyBoEI-unsplash.jpg"
+      />
+      <p class="text-center mt-5">로딩중</p>
+    </article>
+    <article class="result mt-5">
+      <span id="bubble" class="text-center">> 결과 <</span>
+      <div id="explainAa" class="text-center mt-5"></div>
+      <div id="explainAb" class="text-center"></div>
+      <div id="explainAc" class="text-center"></div>
+      <div id="explainAd" class="text-center"></div>
+      <p class="text-center mt-5">.</p>
+      <p class="text-center mt-5">.</p>
+      <p class="text-center mt-5">.</p>
+      <p class="text-center mt-5">.</p>
+      <p class="text-center mt-5">.</p>
+      <p class="text-center mt-5">.</p>
+      <p class="text-center mt-5">.</p>
+      <p class="text-center mt-5">.</p>
+      <div class="text-center">
+        <img class="rounded-circle mt-5" id="img" src="" />
+      </div>
+      <div id="explainBa" class="text-center mt-5"></div>
+      <div id="explainBb" class="text-center"></div>
+      <div id="explainBc" class="text-center"></div>
+      <!-- Go to www.addthis.com/dashboard to customize your tools -->
+      <div class="addthis_inline_share_toolbox_5dxm text-center mt-5"></div>
+    </article>
+    <input type="hidden" id="EI" value="0" />
+    <input type="hidden" id="SN" value="0" />
+    <input type="hidden" id="TF" value="0" />
+    <input type="hidden" id="JP" value="0" />
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      var num = 1;
+      var q = {
+        1: {
+          "number": "(1/12)",
+          "title": "나는 거짓말을 잘한다.",
+          "type": "EI",
+          "A": "> 예",
+          "B": "> 아니오",
+        },
+        2: {
+          "number": "(2/12)",
+          "title": "나는 밤낮이 바뀌었다.",
+          "type": "SN",
+          "A": "> 예",
+          "B": "> 아니오",
+        },
+        3: {
+          "number": "(3/12)",
+          "title": "나는 곱창을 좋아한다.",
+          "type": "TF",
+          "A": "> 예",
+          "B": "> 아니오",
+        },
+        4: {
+          "number": "(4/12)",
+          "title": "나는 똑똑하다.",
+          "type": "JP",
+          "A": "> 예",
+          "B": "> 아니오",
+        },
+        5: {
+          "number": "(5/12)",
+          "title": "나는 포커페이스를 잘한다.",
+          "type": "EI",
+          "A": "> 예",
+          "B": "> 아니오",
+        },
+        6: {
+          "number": "(6/12)",
+          "title": "나는 아침에 일어나기 매우 힘들다.",
+          "type": "SN",
+          "A": "> 예",
+          "B": "> 아니오",
+        },
+        7: {
+          "number": "(7/12)",
+          "title": "나는 순대 간을 좋아한다.",
+          "type": "TF",
+          "A": "> 예",
+          "B": "> 아니오",
+        },
+        8: {
+          "number": "(8/12)",
+          "title": "나는 몸쓰는 것보다 머리 쓰는 것을 더 잘한다.",
+          "type": "JP",
+          "A": "> 예",
+          "B": "> 아니오",
+        },
+        9: {
+          "number": "(9/12)",
+          "title":
+            "나는 평소에 주위 사람들로부터 속을 모르겠다는 소리를 자주 듣는다.",
+          "type": "EI",
+          "A": "> 예",
+          "B": "> 아니오",
+        },
+        10: {
+          "number": "(10/12)",
+          "title": "나는 밤에 자려고 누웠지만 핸드폰 한다고 늦게 잔 적이 많다.",
+          "type": "SN",
+          "A": "> 예",
+          "B": "> 아니오",
+        },
+        11: {
+          "number": "(11/12)",
+          "title": "나는 게 내장에 밥 비벼 먹는 것을 좋아한다.",
+          "type": "TF",
+          "A": "> 예",
+          "B": "> 아니오",
+        },
+        12: {
+          "number": "(12/12)",
+          "title": "8÷2(2+2) = ?",
+          "type": "JP",
+          "A": "> 1",
+          "B": "> 16",
+        },
+      };
+
+      var result = {
+        "ESTJ": {
+          "img": "nine-tailed-g6ce296eca_1920.jpg",
+          "character": "구미호",
+          "explainAa": "남을 잘 속이고,",
+          "explainAb": "야행성이고,",
+          "explainAc": "장기류를 좋아하고,",
+          "explainAd": "지능이 높은 당신은",
+          "explainBa": "사람을 홀려서",
+          "explainBb": "간을 빼먹는",
+          "explainBc": "구미호와 찰떡!",
+          // Image by <a href="https://pixabay.com/users/doublewtt-15395097/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=4881223">甜 汪</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=4881223">Pixabay</a>
+        },
+        "ESTP": {
+          "img": "werewolf-g87a9fe7f5_1280.png",
+          "character": "늑대인간",
+          "explainAa": "남을 잘 속이고,",
+          "explainAb": "야행성이고,",
+          "explainAc": "장기류를 좋아하고,",
+          "explainAd": "지능이 딱히 높진 않은 당신은",
+          "explainBa": "사람들 사이에서 잘 숨어살다가",
+          "explainBb": "보름달이 뜨는 밤 늑대로 변하는",
+          "explainBc": "늑대인간 그 자체!",
+          // Image by <a href="https://pixabay.com/users/openclipart-vectors-30363/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=2024126">OpenClipart-Vectors</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=2024126">Pixabay</a>
+        },
+        "ESFJ": {
+          "img": "count-dracula-gb56f42996_1920.jpg",
+          "character": "흡혈귀",
+          "explainAa": "남을 잘 속이고,",
+          "explainAb": "야행성이고,",
+          "explainAc": "장기류를 딱히 선호하지 않고,",
+          "explainAd": "지능이 높은 당신은",
+          "explainBa": "햇빛을 피해 밤에 활동하면서",
+          "explainBb": "피를 마시기 위해 사람들을 홀리는",
+          "explainBc": "흡혈귀 그 자체!",
+          // Image by <a href="https://pixabay.com/users/artsybee-462611/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1385527">Oberholster Venita</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1385527">Pixabay</a>
+        },
+        "ESFP": {
+          "img": "goblin-gec342e237_1920.png",
+          "character": "도깨비",
+          "explainAa": "남을 잘 속이고,",
+          "explainAb": "야행성이고,",
+          "explainAc": "장기류를 딱히 선호하지 않고,",
+          "explainAd": "지능이 딱히 높진 않은 당신은",
+          "explainBa": "밤이 되면 작은 빛과 함께 나타나",
+          "explainBb": "사람을 현혹시키는",
+          "explainBc": "도깨비와 찰떡!",
+          // Image by <a href="https://pixabay.com/users/mgreenlake-12974399/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=4322464">Michael Thomas-Faria</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=4322464">Pixabay</a>
+        },
+        "ENTJ": {
+          "img": "witch-g7142424d2_1280.png",
+          "character": "마녀",
+          "explainAa": "남을 잘 속이고,",
+          "explainAb": "주로 낮에 활동하고,",
+          "explainAc": "장기류를 좋아하고,",
+          "explainAd": "지능이 높은 당신은",
+          "explainBa": "신비한 물약들을 만들고",
+          "explainBb": "사람들에게 저주를 내리는",
+          "explainBc": "마녀 그 자체!",
+          // Image by <a href="https://pixabay.com/users/openclipart-vectors-30363/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=155291">OpenClipart-Vectors</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=155291">Pixabay</a>
+        },
+        "ENTP": {
+          "img": "chinese-g7597e275a_1280.png",
+          "character": "설녀",
+          "explainAa": "남을 잘 속이고,",
+          "explainAb": "주로 낮에 활동하고,",
+          "explainAc": "장기류를 좋아하고,",
+          "explainAd": "지능이 딱히 높진 않은 당신은",
+          "explainBa": "추운 겨울 사람들을 홀려",
+          "explainBb": "그들을 얼어죽게 만드는",
+          "explainBc": "설녀와 찰떡!",
+          // Image by <a href="https://pixabay.com/users/openclipart-vectors-30363/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=161791">OpenClipart-Vectors</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=161791">Pixabay</a>
+        },
+        "ENFJ": {
+          "img": "devil-g023fcf2d4_1280.png",
+          "character": "악마",
+          "explainAa": "남을 잘 속이고,",
+          "explainAb": "주로 낮에 활동하고,",
+          "explainAc": "장기류를 딱히 선호하지 않고,",
+          "explainAd": "지능이 높은 당신은",
+          "explainBa": "정체를 숨기고 있다가",
+          "explainBb": "한순간 인간을 타락시키는",
+          "explainBc": "악마 그 자체!",
+        },
+        "ENFP": {
+          "img": "depression-ga45f7dc42_1280.png",
+          "character": "그림자",
+          "explainAa": "남을 잘 속이고,",
+          "explainAb": "주로 낮에 활동하고,",
+          "explainAc": "장기류를 딱히 선호하지 않고,",
+          "explainAd": "지능이 딱히 높진 않은 당신은",
+          "explainBa": "햇빛이 있는 주로 낮에 활동하며",
+          "explainBb": "한 사람만 졸졸 따라다니는",
+          "explainBc": "그림자와 찰떡!",
+          // Image by <a href="https://pixabay.com/users/shrooomy-25536003/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=7182989">Shrooomy</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=7182989">Pixabay</a>ㄴ
+        },
+        "ISTJ": {
+          "img": "toy-ge47e2fb69_1280.png",
+          "character": "물귀신",
+          "explainAa": "겉모습으로 심리가 다 드러나고,",
+          "explainAb": "야행성이고,",
+          "explainAc": "장기류를 좋아하고,",
+          "explainAd": "지능이 높은 당신은",
+          "explainBa": "머리를 길게 풀어헤치고",
+          "explainBb": "물가로 오는 사람들을 잡아끄는",
+          "explainBc": "물귀신과 찰떡!",
+          // Image by <a href="https://pixabay.com/users/openclipart-vectors-30363/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=576499">OpenClipart-Vectors</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=576499">Pixabay</a>
+        },
+        "ISTP": {
+          "img": "the-draft-g403a739fc_1920.jpg",
+          "character": "강시",
+          "explainAa": "겉모습으로 심리가 다 드러나고,",
+          "explainAb": "야행성이고,",
+          "explainAc": "장기류를 좋아하고,",
+          "explainAd": "지능이 딱히 높진 않은 당신은",
+          "explainBa": "어두운 밤",
+          "explainBb": "오직 목표물을 향해 돌진하는 ",
+          "explainBc": "강시 그 자체!",
+          // Image by <a href="https://pixabay.com/users/lologo-7535860/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=3053615">LOLOGO</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=3053615">Pixabay</a>
+        },
+        "ISFJ": {
+          "img": "ghosts-g781301e0e_1280.png",
+          "character": "유령",
+          "explainAa": "겉모습으로 심리가 다 드러나고,",
+          "explainAb": "야행성이고,",
+          "explainAc": "장기류를 딱히 선호하지 않고,",
+          "explainAd": "지능이 높은 당신은",
+          "explainBa": "어두운 밤 겉모습만으로",
+          "explainBb": "사람을 놀래키는 ",
+          "explainBc": "유령과 찰떡!",
+          // Image by <a href="https://pixabay.com/users/schmidsi-104144/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1775548">Schmidsi</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1775548">Pixabay</a>
+        },
+        "ISFP": {
+          "img": "mummy-gb26e605c0_1280.png",
+          "character": "미라",
+          "explainAa": "겉모습으로 심리가 다 드러나고,",
+          "explainAb": "야행성이고,",
+          "explainAc": "장기류를 딱히 선호하지 않고,",
+          "explainAd": "지능이 딱히 높진 않은 당신은",
+          "explainBa": "겉모습만으로도",
+          "explainBb": "우리에게 공포를 느끼게 하는",
+          "explainBc": "미라 그 자체!",
+          // Image by <a href="https://pixabay.com/users/openclipart-vectors-30363/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=148976">OpenClipart-Vectors</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=148976">Pixabay</a>
+        },
+        "INTJ": {
+          "img": "ghost-g3e9153eb0_1280.png",
+          "character": "처녀귀신",
+          "explainAa": "겉모습으로 심리가 다 드러나고,",
+          "explainAb": "주로 낮에 활동하고,",
+          "explainAc": "장기류를 좋아하고,",
+          "explainAd": "지능이 높은 당신은",
+          "explainBa": "긴 머리를 풀어헤치고",
+          "explainBb": "사람들을 따라다니면서 괴롭히는",
+          "explainBc": "처녀귀신과 찰떡!",
+          // Image by <a href="https://pixabay.com/users/glopezr-1335465/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=2672759">G Lopez</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=2672759">Pixabay</a>
+        },
+        "INTP": {
+          "img": "zombie-g80248e056_1280.png",
+          "character": "좀비",
+          "explainAa": "겉모습으로 심리가 다 드러나고,",
+          "explainAb": "주로 낮에 활동하고,",
+          "explainAc": "장기류를 좋아하고,",
+          "explainAd": "지능이 딱히 높진 않은 당신은",
+          "explainBa": "밝을 때 미친듯이 뛰어다니며",
+          "explainBb": "사람을 물어뜯는",
+          "explainBc": "좀비와 찰떡!",
+          // Image by <a href="https://pixabay.com/users/arousalandpublicdomain-7400657/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=3760527">Marta Simon</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=3760527">Pixabay</a>
+        },
+        "INFJ": {
+          "img": "halloween-g875f31337_1280.png",
+          "character": "프랑켄슈타인",
+          "explainAa": "겉모습으로 심리가 다 드러나고,",
+          "explainAb": "주로 낮에 활동하고,",
+          "explainAc": "장기류를 딱히 선호하지 않고,",
+          "explainAd": "지능이 높은 당신은",
+          "explainBa": "우리와 비슷한듯 다른 외형만으로도",
+          "explainBb": "우리을 놀래키는",
+          "explainBc": "프랑켄슈타인 그 자체!",
+          // Image by <a href="https://pixabay.com/users/xukasa-5288925/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=5642703">Mun Soo</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=5642703">Pixabay</a>
+        },
+        "INFP": {
+          "img": "egg-g09b7bc919_1280.png",
+          "character": "달걀귀신",
+          "explainAa": "겉모습으로 심리가 다 드러나고,",
+          "explainAb": "주로 낮에 활동하고,",
+          "explainAc": "장기류를 딱히 선호하지 않고,",
+          "explainAd": "지능이 딱히 높진 않은 당신은",
+          "explainBa": "달걀 형상을 한 얼굴을 가지고",
+          "explainBb": "어디론가 열심히 걸어가는",
+          "explainBc": "달걀귀신 그 자체!",
+          // Image by <a href="https://pixabay.com/users/openclipart-vectors-30363/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=157224">OpenClipart-Vectors</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=157224">Pixabay</a>
+        },
+      };
+
+      function start() {
+        $(".start").hide();
+        $(".question").show();
+        next();
+      }
+      $("#A").click(function () {
+        var type = $("#type").val();
+        var preValue = $("#" + type).val();
+        $("#" + type).val(parseInt(preValue) + 1);
+        next();
+      });
+      $("#B").click(function () {
+        next();
+      });
+
+      function next() {
+        if (num == 13) {
+          $(".question").hide();
+          // $(".loading").show();
+          $(".loading").delay(3000).hide();
+          $(".result").show();
+          var mbti = "";
+          $("#EI").val() < 2 ? (mbti += "I") : (mbti += "E");
+          $("#SN").val() < 2 ? (mbti += "N") : (mbti += "S");
+          $("#TF").val() < 2 ? (mbti += "F") : (mbti += "T");
+          $("#JP").val() < 2 ? (mbti += "P") : (mbti += "J");
+          $("#img").attr("src", result[mbti]["img"]);
+          $("#character").html(result[mbti]["character"]);
+          $("#explainAa").html(result[mbti]["explainAa"]);
+          $("#explainAb").html(result[mbti]["explainAb"]);
+          $("#explainAc").html(result[mbti]["explainAc"]);
+          $("#explainAd").html(result[mbti]["explainAd"]);
+          $("#explainBa").html(result[mbti]["explainBa"]);
+          $("#explainBb").html(result[mbti]["explainBb"]);
+          $("#explainBc").html(result[mbti]["explainBc"]);
+        } else {
+          $(".progress-bar").attr("style", "width: calc(100/12*" + num + "%)");
+          $("#number").html(q[num]["number"]);
+          $("#title").html(q[num]["title"]);
+          $("#type").val(q[num]["type"]);
+          $("#A").html(q[num]["A"]);
+          $("#B").html(q[num]["B"]);
+          num++;
+        }
+      }
+    </script>
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+    <script
+      type="text/javascript"
+      src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-6328544602cf99da"
+    ></script>
+  </body>
+</html>
